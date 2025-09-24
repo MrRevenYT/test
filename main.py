@@ -1,28 +1,57 @@
 def main():
+
     @bot.message_handler(commands=["start"])
-    def start_message(message):
+    def start_message(message=None, call=None):
+
+        if message:
+            chat_id = message.chat.id
+        elif call:
+            chat_id = call.message.chat.id
+        else:
+            return
 
         markup = types.InlineKeyboardMarkup()
 
-        btn1 = types.InlineKeyboardButton("📊 Статистика", callback_data="stats")
-        btn2 = types.InlineKeyboardButton("⚙️ Настройки", callback_data="settings")
-        btn3 = types.InlineKeyboardButton("ℹ️ Помощь", callback_data="help")
+        btn1 = types.InlineKeyboardButton(messages["MENU_BUTTON_1"], callback_data="stats")
+        btn2 = types.InlineKeyboardButton(messages["MENU_BUTTON_2"], callback_data="settings")
+        btn3 = types.InlineKeyboardButton(messages["MENU_BUTTON_3"], callback_data="order")
+        btn4 = types.InlineKeyboardButton(messages["MENU_BUTTON_4"], callback_data="help")
 
-        markup.row(btn1, btn2)
-        markup.row(btn3)
+        markup.row(btn1, btn2, btn3)
+        markup.row(btn4)
 
-        bot.send_message(message.chat.id,messages["START"],reply_markup=markup)
+        if call:
+            try:
+                bot.edit_message_text(call.message.message.id ,chat_id, messages["START"], reply_markup=markup)
+            except:
+                bot.send_message(chat_id, messages["START"], reply_markup=markup)
+        else:
+            bot.send_message(chat_id, messages["START"], reply_markup=markup)
 
-        @bot.callback_query_handler(func=lambda call: True)
-        def callback_handler(call):
-            if call.data == "stats":
-                bot.answer_callback_query(call.id, "📊 Статистика загружается...")
+    @bot.callback_query_handler(func=lambda call: True)
+    def callback_handler(call):
 
-            elif call.data == "settings":
-                bot.answer_callback_query(call.id, "⚙️ Открываю настройки...")
+        if call.data == "exit":
+            bot.answer_callback_query(call.id, "Выход...")
+            start_message(call=call)
 
-            elif call.data == "help":
-                bot.answer_callback_query(call.id, "ℹ️ Раздел помощи")
+        elif call.data == "profile":
+            bot.answer_callback_query(call.id, "Загрузка профиля...")
+
+        elif call.data == "order":
+            bot.answer_callback_query(call.id, "Загрузка заказа...")
+            time.sleep(randint(3, 5))
+
+            markup = types.InlineKeyboardMarkup()
+
+            btn1 = types.InlineKeyboardButton(messages["ORDER_BUTTON_1"], callback_data="exit")
+            btn2 = types.InlineKeyboardButton(messages["ORDER_BUTTON_2"], callback_data="order_2")
+
+            markup.row(btn1)
+            markup.row(btn2)
+
+            bot.send_message(call.message.chat.id, messages["PRICES"], reply_markup=markup)
+
 
 
 
@@ -49,9 +78,12 @@ def main():
 
 
 if __name__ == '__main__':
+    from random import randint
+    import time
     import telebot
     from telebot import types
     from Funcs import init
+
 
     bot, messages, debug = init()
 
