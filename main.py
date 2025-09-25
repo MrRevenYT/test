@@ -37,6 +37,14 @@ def main():
 
         elif call.data == "profile":
             bot.answer_callback_query(call.id, "Загрузка профиля...")
+            time.sleep(randint(3, 5))
+
+            markup = types.InlineKeyboardMarkup()
+
+            btn1 = types.InlineKeyboardButton(messages["ORDER_BUTTON_1"], callback_data="deposit")
+            btn2 = types.InlineKeyboardButton(messages["EXIT_BUTTON"], callback_data="exit")
+
+            bot.send_message(call.message.chat.id, messages["DEPOSIT_BUTTON"])
 
         elif call.data == "order":
             bot.answer_callback_query(call.id, "Загрузка заказа...")
@@ -44,8 +52,8 @@ def main():
 
             markup = types.InlineKeyboardMarkup()
 
-            btn1 = types.InlineKeyboardButton(messages["ORDER_BUTTON_1"], callback_data="exit")
-            btn2 = types.InlineKeyboardButton(messages["ORDER_BUTTON_2"], callback_data="order_2")
+            btn1 = types.InlineKeyboardButton(messages["EXIT_BUTTON"], callback_data="exit")
+            btn2 = types.InlineKeyboardButton(messages["ORDER_BUTTON"], callback_data="order_2")
 
             markup.row(btn1)
             markup.row(btn2)

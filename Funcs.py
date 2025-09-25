@@ -33,8 +33,25 @@ def db_insert(db_name, db_table):
     with sqlite3.connect(str(db_name) + '.db') as db:
         cursor = db.cursor()
 
-        cursor.execute(f'''INSERT INTO {db_table} (id, username, balance)
-''')
+        cursor.execute(f'''INSERT INTO {db_table} (id, username, balance) VALUES (?, ?, ?)''',(1, 'MrRaven', 10.45))
+
+def db_update(db_name, db_table):
+    with sqlite3.connect(str(db_name) + '.db') as db:
+        cursor = db.cursor()
+
+        cursor.execute(f'''UPDATE {db_table} SET age = ? WHERE username = ?''', (29, 'newuser'))
+
+def db_delete(db_name, db_table):
+    with sqlite3.connect(str(db_name) + '.db') as db:
+        cursor = db.cursor()
+
+        cursor.execute(f'''DELETE FROM {db_table} WHERE username = ?''', ('newuser'))
+
+def db_select(db_name, db_table):
+    with sqlite3.connect(str(db_name) + '.db') as db:
+        cursor = db.cursor()
+
+        cursor.execute(f'''SELECT * FROM {db_table} WHERE balance = 3''')
 
 db_name = 'database'
 db_table = 'Users'
