@@ -20,14 +20,22 @@ def init():
     return bot, messages, debug
 
 
-def db_create(db_name):
+def db_create(db_name, db_table):
     with sqlite3.connect(str(db_name) + '.db') as db:
         cursor = db.cursor()
 
-        cursor.execute('''CREATE TABLE IF NOT EXISTS Users (
+        cursor.execute(f'''CREATE TABLE IF NOT EXISTS {db_table} (
 id INTEGER PRIMARY KEY,
 username TEXT NOT NULL,
 balance REAL NOT NULL)''')
 
-db_name = 'users'
-db_create(db_name)
+def db_insert(db_name, db_table):
+    with sqlite3.connect(str(db_name) + '.db') as db:
+        cursor = db.cursor()
+
+        cursor.execute(f'''INSERT INTO {db_table} (id, username, balance)
+''')
+
+db_name = 'database'
+db_table = 'Users'
+db_create(db_name, db_table)
