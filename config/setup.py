@@ -1,14 +1,21 @@
-path = "config.yaml"
-def setup():
-    import yaml
+import yaml
+from os import path
 
+def setup():
     config = {
         'bot': {
             'token': 'your_bot_token',
+            'admins': [8099756119],
+            'supports': []
         },
         'settings': {
             'debug': False,
-            'language': 'ru'
+            'database': {
+                'users': {
+                    'database-name': 'database',
+                    'database-table-name': 'Users'
+                }
+            }
         },
         'messages': {
             'ru': {
@@ -31,19 +38,25 @@ def setup():
 
 ✅ ПОЧЕМУ МЫ?
 ▪️ Качественно
-▪️ Дешево* *
+▪️ Дешево
 ▪️ Полная анонимность
 
 Покупай, решим твою "проблему". 😉''',
                 'MENU_BUTTON_1': '🔧 Поддержка',
                 'MENU_BUTTON_2': '⚙️ Профиль',
-                'MENU_BUTTON_3': '🎀 Заказ',
+                'MENU_BUTTON_3': '🎀 Заказать',
                 'MENU_BUTTON_4': 'ℹ Вопросы',
+                'PROFILE_BUTTON_1': '❌ Удалить данные',
+                'PROFILE_BUTTON_2': '💸 Пополнить баланс',
+                'EXIT_BUTTON': '⏪ Назад',
+                'ORDER_BUTTON': '🎀 Сделать заказать',
                 'PRICES': '''Расценки:
                 
-Расценки:
-Roblox (робукс) x1 ≈ $0.0127 (1$ ≈ 78)
-Standoff (голдi) x1 ≈ $0.006 (1$ ≈ 166G)
+Обмен:
+Roblox (робукс) x1 ≈ $0.0127 (1$ ≈ 78 р)
+Standoff (голдi) x1 ≈ $0.006 (1$ ≈ 166 G)
+Hamster (коiн) x1 ≈ $0,0000000003 (1$ ≈ 2968472447 HAM)
+
 Russia (Рубль) 1$ ≈ 83.75 ₽
 Бутан (Нгултрум): 1$ ≈ 83.75 BTN
 Сейшельские острова (Сейшельская рупия): 1$ ≈ 13.50 SCR
@@ -55,28 +68,38 @@ Russia (Рубль) 1$ ≈ 83.75 ₽
 • Снос акка — 4.5 $
 • Поджог двери — 63.33 $
 ''',
-                'EXIT_BUTTON': '⏪ Назад',
-                'ORDER_BUTTON': '👛 Сделать заказ',
-                'DEPOSIT_BUTTON': '💸 Пополнить баланс',
             }
         }
     }
 
-    from os import path
-    from bot_token import bot_token
-    if path.exists(r"../bot_token.py"):
-        config["bot"]["token"] = bot_token()
-
+    config_path = "config.yaml"
     if __name__ == '__main__':
-        path = "../config.yaml"
-    with open(path, 'w', encoding='utf-8') as file:
-        yaml.dump(config, file, default_flow_style=False, allow_unicode=True)
+        config_path = "../config.yaml"
 
-    print("Config Created")
-    print("Введите токен бота в конфиге")
+    try:
+        if path.exists("bot_token.py") or path.exists("../bot_token.py"):
+            from bot_token import bot_token
+            token = bot_token()
+            config["bot"]["token"] = token
 
+    except ImportError:
+        print("⚠️ Файл bot_token.py не найден")
 
-    exit()
+    try:
+        with open(config_path, 'w', encoding='utf-8') as file:
+            yaml.dump(config, file, default_flow_style=False, allow_unicode=True, indent=2)
+
+        print("✅ Конфиг был успешно загружен!")
+        print("✅ Config path:", path.abspath(config_path))
+
+        if config["bot"]["token"] == 'your_bot_token_here':
+            print("⚠️ ВНИМАНИЕ: Не забудьте ввести токен бота в config.yaml")
+            exit()
+        else:
+            print("✅ Токен бота был успешно загружен из bot_token.py")
+
+    except Exception as e:
+        print(f"❌ Ошибка при создании config.yaml: {e}")
 
 if __name__ == '__main__':
     setup()
